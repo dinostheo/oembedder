@@ -1,5 +1,5 @@
 {
-  "name": "oembed",
+  "name": "oembedder",
   "version": "0.0.1",
   "description": "Library to oEmbed a resource",
   "main": "index.js",
@@ -11,5 +11,14 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "request": "^2.87.0"
-  }
+  },
+  "keywords": ["oembed", "embedded"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dinostheo/oembedder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dinostheo/oembedder/issues"
+  },
+  "homepage": "https://github.com/dinostheo/oembedder"
 }
