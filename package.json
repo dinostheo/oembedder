@@ -1,0 +1,15 @@
+{
+  "name": "oembed",
+  "version": "0.0.1",
+  "description": "Library to oEmbed a resource",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dinos Theodorou <dinostheo@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "request": "^2.87.0"
+  }
+}
