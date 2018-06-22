@@ -35,8 +35,43 @@ function extractThumbnail($) {
     .attr('content');
 }
 
-module.exports = originUrl =>
-  new Promise((resolve, reject) => {
+function fetchProviderOembed(originUrl, provider) {
+  const oembedUrl = `${provider.endpoints[0].url}?url=${originUrl}&format=json`;
+
+  return new Promise((resolve, reject) => {
+    request(oembedUrl, (error, response, body) => {
+      if (error) {
+        return reject(error);
+      }
+
+      resolve(body);
+    });
+  });
+}
+
+module.exports = (originUrl, providers) =>
+  new Promise(async (resolve, reject) => {
+    const parsedUrl = url.parse(originUrl);
+    const providerHostRegEx = new RegExp(parsedUrl.host);
+    const matchingProvider =
+      providers &&
+      providers.filter(provider =>
+        providerHostRegEx.test(provider.provider_url)
+      )[0];
+
+    if (matchingProvider) {
+      try {
+        const embeddedResource = await fetchProviderOembed(
+          originUrl,
+          matchingProvider
+        );
+
+        return resolve(JSON.parse(embeddedResource));
+      } catch (error) {
+        return reject(error);
+      }
+    }
+
     const reqStream = request(
       {
         method: 'GET',
@@ -45,7 +80,7 @@ module.exports = originUrl =>
       },
       (error, response, body) => {
         if (error) {
-          return error;
+          return reject(error);
         }
 
         const $ = cheerio.load(body);
@@ -56,10 +91,8 @@ module.exports = originUrl =>
         $('link').remove();
         $('title').remove();
 
-        const parsedUrl = url.parse(originUrl);
-
         BASIC_SCHEMA.title = extractTitle($);
-        BASIC_SCHEMA.provider_url = `${parsedUrl.protocol}//${parsedUrl.host}`;
+        BASIC_SCHEMA.provider_url = `${parsedUrl.protocol}//${parsedUrl.host}/`;
         BASIC_SCHEMA.provider_name = extractProviderName($) || parsedUrl.host;
         BASIC_SCHEMA.author_url = BASIC_SCHEMA.provider_url;
         BASIC_SCHEMA.author_name = extractAuthorName($) || parsedUrl.host;
@@ -69,16 +102,18 @@ module.exports = originUrl =>
       }
     );
 
-    reqStream.on('response', res => {
-      if (res.statusCode !== 200) {
+    reqStream.on('response', response => {
+      if (response.statusCode !== 200) {
         reqStream.emit(
           'error',
-          new Error(`Http status code ${res.statusCode}`)
+          new Error(`Http status code ${response.statusCode}`)
         );
-      } else if (!/text\/html/.test(res.headers['content-type'])) {
+      } else if (!/text\/html/.test(response.headers['content-type'])) {
         reqStream.emit(
           'error',
-          new Error(`Unsupported content type ${res.headers['content-type']}`)
+          new Error(
+            `Unsupported content type ${response.headers['content-type']}`
+          )
         );
       }
     });
