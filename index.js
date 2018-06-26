@@ -34,7 +34,7 @@ function extractThumbnail($) {
 }
 
 function fetchProviderOembed(originUrl, provider) {
-  const oembedUrl = `${provider.endpoints[0].url}?url=${originUrl}&format=json`;
+  const oembedUrl = `${provider}?url=${originUrl}&format=json`;
 
   return new Promise((resolve, reject) => {
     request(oembedUrl, (error, response, body) => {
@@ -47,22 +47,13 @@ function fetchProviderOembed(originUrl, provider) {
   });
 }
 
-module.exports = (originUrl, providers) =>
+module.exports = (originUrl, provider) =>
   new Promise(async (resolve, reject) => {
     const parsedUrl = url.parse(originUrl);
-    const providerHostRegEx = new RegExp(parsedUrl.host);
-    const matchingProvider =
-      providers &&
-      providers.filter(provider =>
-        providerHostRegEx.test(provider.provider_url)
-      )[0];
 
-    if (matchingProvider) {
+    if (provider) {
       try {
-        const embeddedResource = await fetchProviderOembed(
-          originUrl,
-          matchingProvider
-        );
+        const embeddedResource = await fetchProviderOembed(originUrl, provider);
 
         return resolve(JSON.parse(embeddedResource));
       } catch (error) {
