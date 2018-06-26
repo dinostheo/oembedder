@@ -6,9 +6,7 @@ const url = require('url');
 
 const BASIC_SCHEMA = {
   version: '1.0',
-  type: 'link',
-  thumbnail_width: '',
-  thumbnail_height: ''
+  type: 'link'
 };
 
 const TITLE_SELECTORS = ['h1', 'h2', 'div[class$=title]', 'span[class$=title]'];
