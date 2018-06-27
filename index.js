@@ -12,6 +12,11 @@ const BASIC_SCHEMA = {
 
 function extractField($, field, selectors) {
   const fieldSelectors = selectors[field] || defaultSelectors[field];
+
+  if (!fieldSelectors) {
+    return;
+  }
+
   const fieldSelector = fieldSelectors.filter(({ selector }) => $(selector))[0];
 
   const { selector, text = false, attribute = null } = fieldSelector;
@@ -43,8 +48,9 @@ function fetchProviderOembed(originUrl, provider) {
   });
 }
 
-module.exports = (originUrl, provider) =>
+module.exports = (originUrl, provider, config = {}) =>
   new Promise(async (resolve, reject) => {
+    const { selectors = {} } = config;
     const parsedUrl = url.parse(originUrl);
 
     if (provider) {
@@ -70,15 +76,17 @@ module.exports = (originUrl, provider) =>
 
         const $ = cheerio.load(body);
 
-        // FIXME: read the empty hardcoded selectors from the given configuration.
-        BASIC_SCHEMA.title = extractField($, 'title', {});
-        BASIC_SCHEMA.provider_url = `${parsedUrl.protocol}//${parsedUrl.host}/`;
+        BASIC_SCHEMA.title = extractField($, 'title', selectors);
+        BASIC_SCHEMA.provider_url =
+          extractField($, 'providerUrl', selectors) ||
+          `${parsedUrl.protocol}//${parsedUrl.host}/`;
         BASIC_SCHEMA.provider_name =
-          extractField($, 'providerName', {}) || parsedUrl.host;
-        BASIC_SCHEMA.author_url = BASIC_SCHEMA.provider_url;
+          extractField($, 'providerName', selectors) || parsedUrl.host;
+        BASIC_SCHEMA.author_url =
+          extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
         BASIC_SCHEMA.author_name =
-          extractField($, 'authorName', {}) || parsedUrl.host;
-        BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', {});
+          extractField($, 'authorName', selectors) || parsedUrl.host;
+        BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
 
         resolve(BASIC_SCHEMA);
       }
