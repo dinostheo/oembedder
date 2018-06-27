@@ -3,34 +3,30 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const url = require('url');
+const { defaultSelectors } = require('./config');
 
 const BASIC_SCHEMA = {
   version: '1.0',
   type: 'link'
 };
 
-const TITLE_SELECTORS = ['h1', 'h2', 'div[class$=title]', 'span[class$=title]'];
+function extractField($, field, selectors) {
+  const fieldSelectors = selectors[field] || defaultSelectors[field];
+  const fieldSelector = fieldSelectors.filter(({ selector }) => $(selector))[0];
 
-function extractTitle($) {
-  const titleSelector = TITLE_SELECTORS.filter(selector =>
-    $(selector).text()
-  )[0];
+  const { selector, text = false, attribute = null } = fieldSelector;
 
-  return $(titleSelector).text();
-}
+  if (text) {
+    return $(selector)
+      .first()
+      .text();
+  } else if (attribute) {
+    return $(selector)
+      .first()
+      .attr(attribute);
+  }
 
-function extractProviderName($) {
-  return $('meta[property=site_name]').attr('content');
-}
-
-function extractAuthorName($) {
-  return $('meta[name=author]').attr('content');
-}
-
-function extractThumbnail($) {
-  return $('meta[property="og:image"]')
-    .first()
-    .attr('content');
+  return '';
 }
 
 function fetchProviderOembed(originUrl, provider) {
@@ -74,18 +70,15 @@ module.exports = (originUrl, provider) =>
 
         const $ = cheerio.load(body);
 
-        $('script').remove();
-        $('footer').remove();
-        $('style').remove();
-        $('link').remove();
-        $('title').remove();
-
-        BASIC_SCHEMA.title = extractTitle($);
+        // FIXME: read the empty hardcoded selectors from the given configuration.
+        BASIC_SCHEMA.title = extractField($, 'title', {});
         BASIC_SCHEMA.provider_url = `${parsedUrl.protocol}//${parsedUrl.host}/`;
-        BASIC_SCHEMA.provider_name = extractProviderName($) || parsedUrl.host;
+        BASIC_SCHEMA.provider_name =
+          extractField($, 'providerName', {}) || parsedUrl.host;
         BASIC_SCHEMA.author_url = BASIC_SCHEMA.provider_url;
-        BASIC_SCHEMA.author_name = extractAuthorName($) || parsedUrl.host;
-        BASIC_SCHEMA.thumbnail_url = extractThumbnail($);
+        BASIC_SCHEMA.author_name =
+          extractField($, 'authorName', {}) || parsedUrl.host;
+        BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', {});
 
         resolve(BASIC_SCHEMA);
       }
