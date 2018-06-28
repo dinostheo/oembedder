@@ -17,9 +17,9 @@ function extractField($, field, selectors) {
     return;
   }
 
-  const fieldSelector = fieldSelectors.filter(({ selector }) => $(selector))[0];
-
-  const { selector, text = false, attribute = null } = fieldSelector;
+  const { selector, text = false, attribute = null } = fieldSelectors.filter(
+    ({ selector }) => $(selector)
+  )[0];
 
   if (text) {
     return $(selector)
@@ -31,7 +31,7 @@ function extractField($, field, selectors) {
       .attr(attribute);
   }
 
-  return '';
+  return;
 }
 
 function fetchProviderOembed(originUrl, provider) {
@@ -48,9 +48,9 @@ function fetchProviderOembed(originUrl, provider) {
   });
 }
 
-module.exports = (originUrl, provider, config = {}) =>
+module.exports = (originUrl, config = {}) =>
   new Promise(async (resolve, reject) => {
-    const { selectors = {} } = config;
+    const { selectors = {}, provider } = config;
     const parsedUrl = url.parse(originUrl);
 
     if (provider) {
