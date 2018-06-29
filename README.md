@@ -8,9 +8,15 @@ Delivers the embedded representation of a URL if one is provided or tries to cre
 
 # Usage
 
-The `oembedder` module exports a function that accepts two parameters, the url of the resource to get the oEmbed format and the url of the provider that have an oEmbed representation of their resources, if this is known.
+The `oembedder` module exports a function that accepts two parameters, the url of the resource to get the oEmbed format and an optional configuration object that might contain custom selectors to extract values from a specific resource and/or the provider url.
 
-## Provider
+If a provider url is given the custom selectors are superfluous.
+
+## Configuration
+
+The configuration consists of the following two properties (`provider`, `selectors`).
+
+### Provider
 
 You can find the oEmbed provider from the [oembed.com](https://oembed.com/#section7) list, or you might know a provider that is not listed there.
 
@@ -35,7 +41,7 @@ The above JSON is retrieved from [oembed.com](https://oembed.com/#section7) and 
 
 The oembedder returns a promise that resolves to the oEmbed format of the requested resource, as a javascript object.
 
-### Example usage with provider
+#### Example with provider
 
 _Usage:_
 
@@ -70,7 +76,7 @@ _Response_
 }
 ```
 
-### Example usage without provider
+#### Example without provider
 
 If you don't know the provider or there is no oEmbed provider to a specific url. The library will try to resolve the oEmbed format of the resource.
 
@@ -100,6 +106,51 @@ _Response_
   author_name: 'Richard Gray',
   thumbnail_url:'http://ichef.bbci.co.uk/wwfeatures/live/624_351/images/live/p0/6c/29/p06c29f1.jpg'
 }
+```
+
+### Selectors
+
+You can use selectors to extract information from a specific page for a specific property of the oEmbed format. If no selectors are provided a set of default selectors will be used to extract this information. You can overwrite part or all of the default selectors by passing a custom selector for an oEmbed property.
+
+The current library supports attribute values of matched element, or text within its html tag.
+
+| Property     | Default selector(s)             | text  | attribute | Default value     |
+| ------------ | ------------------------------- | ----- | --------- | ----------------- |
+| title        | `h1`, `h2`, `div[class$=title]` | true  |           | `undefined`       |
+| providerUrl  |                                 |       |           | `resource domain` |
+| providerName | `meta[property=site_name]`      | false | content   | `resource host`   |
+| authorUrl    |                                 |       |           | `provider url`    |
+| authorName   | `meta[name=author]`             | false | content   | `resource host`   |
+| thumbnail    | `meta[property="og:image"]`     | false | content   | `unedfined`       |
+
+#### Example with custom selectors
+
+The following configuration of selectors is set to extract the author name and url of blog post on [medium.com](https://medium.com).
+
+```js
+const oembedder = require('oembedder');
+
+const selectors = {
+  authorName: [
+    {
+      selector: '.ds-link',
+      text: true
+    }
+  ],
+  authorUrl: [
+    {
+      selector: '.ds-link',
+      attribute: 'href'
+    }
+  ]
+};
+
+const url =
+  'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';
+
+oembedder(url, { selectors })
+  .then(console.log)
+  .catch(console.log);
 ```
 
 # Limitations
