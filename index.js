@@ -17,21 +17,21 @@ function extractField($, field, selectors) {
     return;
   }
 
-  const { selector, text = false, attribute = null } = fieldSelectors.filter(
-    ({ selector }) => $(selector)
+  const { selector, text = false, attribute = null } = fieldSelectors.filter(({ selctr }) =>
+    $(selctr)
   )[0];
 
   if (text) {
     return $(selector)
       .first()
       .text();
-  } else if (attribute) {
+  }
+
+  if (attribute) {
     return $(selector)
       .first()
       .attr(attribute);
   }
-
-  return;
 }
 
 function fetchProviderOembed(originUrl, provider) {
@@ -78,14 +78,11 @@ module.exports = (originUrl, config = {}) =>
 
         BASIC_SCHEMA.title = extractField($, 'title', selectors);
         BASIC_SCHEMA.provider_url =
-          extractField($, 'providerUrl', selectors) ||
-          `${parsedUrl.protocol}//${parsedUrl.host}/`;
-        BASIC_SCHEMA.provider_name =
-          extractField($, 'providerName', selectors) || parsedUrl.host;
+          extractField($, 'providerUrl', selectors) || `${parsedUrl.protocol}//${parsedUrl.host}/`;
+        BASIC_SCHEMA.provider_name = extractField($, 'providerName', selectors) || parsedUrl.host;
         BASIC_SCHEMA.author_url =
           extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
-        BASIC_SCHEMA.author_name =
-          extractField($, 'authorName', selectors) || parsedUrl.host;
+        BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
         BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
 
         resolve(BASIC_SCHEMA);
@@ -94,16 +91,11 @@ module.exports = (originUrl, config = {}) =>
 
     reqStream.on('response', response => {
       if (response.statusCode !== 200) {
-        reqStream.emit(
-          'error',
-          new Error(`Http status code ${response.statusCode}`)
-        );
+        reqStream.emit('error', new Error(`Http status code ${response.statusCode}`));
       } else if (!/text\/html/.test(response.headers['content-type'])) {
         reqStream.emit(
           'error',
-          new Error(
-            `Unsupported content type ${response.headers['content-type']}`
-          )
+          new Error(`Unsupported content type ${response.headers['content-type']}`)
         );
       }
     });
