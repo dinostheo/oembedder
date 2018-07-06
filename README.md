@@ -1,5 +1,7 @@
 # oembedder
 
+[![CircleCI](https://circleci.com/gh/dinostheo/oembedder/tree/master.svg?style=svg)](https://circleci.com/gh/dinostheo/oembedder/tree/master) [![Known Vulnerabilities](https://snyk.io/test/github/dinostheo/oembedder/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dinostheo/oembedder?targetFile=package.json)
+
 Delivers the embedded representation of a URL if one is provided or tries to create it with the information present on the given URL.
 
 # Installation
@@ -85,8 +87,7 @@ _Usage:_
 ```js
 const oembedder = require('oembedder');
 
-const url =
-  'http://www.bbc.com/capital/story/20180626-why-owls-might-suffer-in-a-cashless-society';
+const url = 'http://www.bbc.com/capital/story/20180626-why-owls-might-suffer-in-a-cashless-society';
 
 oembedder(url)
   .then(console.log)
@@ -145,8 +146,7 @@ const selectors = {
   ]
 };
 
-const url =
-  'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';
+const url = 'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';
 
 oembedder(url, { selectors })
   .then(console.log)
