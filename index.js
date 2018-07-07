@@ -3,7 +3,7 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const url = require('url');
-const { defaultSelectors } = require('./config');
+const { defaultSelectors, defaultHttpOptions } = require('./config');
 
 const BASIC_SCHEMA = {
   version: '1.0',
@@ -50,7 +50,7 @@ function fetchProviderOembed(originUrl, provider) {
 
 module.exports = (originUrl, config = {}) =>
   new Promise(async (resolve, reject) => {
-    const { selectors = {}, provider } = config;
+    const { selectors = {}, provider, httpOptions = {} } = config;
     const parsedUrl = url.parse(originUrl);
 
     if (provider) {
@@ -63,31 +63,34 @@ module.exports = (originUrl, config = {}) =>
       }
     }
 
-    const reqStream = request(
-      {
-        method: 'GET',
-        uri: originUrl,
-        gzip: true
-      },
-      (error, response, body) => {
-        if (error) {
-          return reject(error);
-        }
+    const requestOptions = {
+      method: 'GET',
+      uri: originUrl,
+      gzip: httpOptions.gzip || defaultHttpOptions.gzip,
+      followRedirect: httpOptions.followRedirect || defaultHttpOptions.followRedirect,
+      timeout: httpOptions.timeout || defaultHttpOptions.timeout,
+      encoding: httpOptions.encoding || defaultHttpOptions.encoding,
+      headers: httpOptions.headers || defaultHttpOptions.headers
+    };
 
-        const $ = cheerio.load(body);
-
-        BASIC_SCHEMA.title = extractField($, 'title', selectors);
-        BASIC_SCHEMA.provider_url =
-          extractField($, 'providerUrl', selectors) || `${parsedUrl.protocol}//${parsedUrl.host}/`;
-        BASIC_SCHEMA.provider_name = extractField($, 'providerName', selectors) || parsedUrl.host;
-        BASIC_SCHEMA.author_url =
-          extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
-        BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
-        BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
-
-        resolve(BASIC_SCHEMA);
+    const reqStream = request(requestOptions, (error, response, body) => {
+      if (error) {
+        return reject(error);
       }
-    );
+
+      const $ = cheerio.load(body);
+
+      BASIC_SCHEMA.title = extractField($, 'title', selectors);
+      BASIC_SCHEMA.provider_url =
+        extractField($, 'providerUrl', selectors) || `${parsedUrl.protocol}//${parsedUrl.host}/`;
+      BASIC_SCHEMA.provider_name = extractField($, 'providerName', selectors) || parsedUrl.host;
+      BASIC_SCHEMA.author_url =
+        extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
+      BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
+      BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
+
+      resolve(BASIC_SCHEMA);
+    });
 
     reqStream.on('response', response => {
       if (response.statusCode !== 200) {

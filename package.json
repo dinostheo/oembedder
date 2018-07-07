@@ -1,6 +1,6 @@
 {
   "name": "oembedder",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Library to oEmbed a resource",
   "main": "index.js",
   "scripts": {

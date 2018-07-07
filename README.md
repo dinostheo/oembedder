@@ -153,6 +153,34 @@ oembedder(url, { selectors })
   .catch(console.log);
 ```
 
+### Http options
+
+The configuration of the module allows the user to set some information of the http GET request. The allowed options are the following:
+
+| http option    | Default value | Description                                                                                 |
+| -------------- | ------------- | ------------------------------------------------------------------------------------------- |
+| encoding       | `utf-8`       | The encoding to be used by the request                                                      |
+| followRedirect | `false`       | To follow or not `3xx` responses as redirects                                               |
+| gzip           | `true`        | Requests compressed content or not                                                          |
+| headers        | `undefined`   | A JS object with [http header info](https://github.com/request/request#custom-http-headers) |
+| timeout        |               | After the timeout in `ms` the request will respond with `ESOCKETTIMEDOUT` error             |
+
+#### Example with http options
+
+```js
+const oembedder = require('oembedder');
+
+const url = 'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';
+
+const httpOptions = {
+  timeout: 5000 // sets the request timeout to 5 seconds
+};
+
+oembedder(url, { httpOptions })
+  .then(console.log)
+  .catch(console.log);
+```
+
 # Limitations
 
 At the moment the library only resolves oEmbeds of type link for the resources that no provider is given or matched.
