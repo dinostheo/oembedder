@@ -1,6 +1,6 @@
 {
   "name": "oembedder",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Library to oEmbed a resource",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "image-size": "^0.6.3",
     "request": "^2.87.0"
   },
   "keywords": ["oembed", "embedded", "Node.js"],

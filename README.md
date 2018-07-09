@@ -105,7 +105,9 @@ _Response_
   provider_name: 'www.bbc.com',
   author_url: 'http://www.bbc.com/',
   author_name: 'Richard Gray',
-  thumbnail_url:'http://ichef.bbci.co.uk/wwfeatures/live/624_351/images/live/p0/6c/29/p06c29f1.jpg'
+  thumbnail_url:'http://ichef.bbci.co.uk/wwfeatures/live/624_351/images/live/p0/6c/29/p06c29f1.jpg',
+  thumbnail_width: 624,
+  thumbnail_height: 351
 }
 ```
 

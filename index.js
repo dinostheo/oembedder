@@ -3,6 +3,7 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const url = require('url');
+const imageSize = require('image-size');
 const { defaultSelectors, defaultHttpOptions } = require('./config');
 
 const BASIC_SCHEMA = {
@@ -48,6 +49,29 @@ function fetchProviderOembed(originUrl, provider) {
   });
 }
 
+function getThumbnailSize(imageUrl) {
+  return new Promise((resolve, reject) => {
+    request(
+      {
+        method: 'GET',
+        uri: imageUrl,
+        encoding: null
+      },
+      (error, response, body) => {
+        if (error) {
+          return reject(error);
+        }
+
+        if (response.statusCode !== 200) {
+          return reject(new Error(`Thumbnail request status code ${response.statusCode}`));
+        }
+
+        resolve(imageSize(body));
+      }
+    );
+  });
+}
+
 module.exports = (originUrl, config = {}) =>
   new Promise(async (resolve, reject) => {
     const { selectors = {}, provider, httpOptions = {} } = config;
@@ -73,7 +97,7 @@ module.exports = (originUrl, config = {}) =>
       headers: httpOptions.headers || defaultHttpOptions.headers
     };
 
-    const reqStream = request(requestOptions, (error, response, body) => {
+    const reqStream = request(requestOptions, async (error, response, body) => {
       if (error) {
         return reject(error);
       }
@@ -88,6 +112,17 @@ module.exports = (originUrl, config = {}) =>
         extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
       BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
       BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
+
+      try {
+        if (BASIC_SCHEMA.thumbnail_url) {
+          const { width, height } = await getThumbnailSize(BASIC_SCHEMA.thumbnail_url);
+
+          BASIC_SCHEMA.thumbnail_width = width;
+          BASIC_SCHEMA.thumbnail_height = height;
+        }
+      } catch (thumbnailError) {
+        return reject(thumbnailError);
+      }
 
       resolve(BASIC_SCHEMA);
     });
