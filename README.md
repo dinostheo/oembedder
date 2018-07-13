@@ -5,21 +5,21 @@
 
 Delivers the embedded representation of a URL if one is provided or tries to create it with the information present on the given URL.
 
-# Installation
+## Installation
 
 `npm i oembedder`
 
-# Usage
+## Usage
 
 The `oembedder` module exports a function that accepts two parameters, the url of the resource to get the oEmbed format and an optional configuration object that might contain custom selectors to extract values from a specific resource and/or the provider url.
 
 If a provider url is given the custom selectors are superfluous.
 
-## Configuration
+### Configuration
 
 The configuration consists of the following two properties (`provider`, `selectors`).
 
-### Provider
+#### Provider
 
 You can find the oEmbed provider from the [oembed.com](https://oembed.com/#section7) list, or you might know a provider that is not listed there.
 
@@ -44,7 +44,7 @@ The above JSON is retrieved from [oembed.com](https://oembed.com/#section7) and 
 
 The oembedder returns a promise that resolves to the oEmbed format of the requested resource, as a javascript object.
 
-#### Example with provider
+##### Example with provider
 
 _Usage:_
 
@@ -79,7 +79,7 @@ _Response_
 }
 ```
 
-#### Example without provider
+##### Example without provider
 
 If you don't know the provider or there is no oEmbed provider to a specific url. The library will try to resolve the oEmbed format of the resource.
 
@@ -112,7 +112,7 @@ _Response_
 }
 ```
 
-### Selectors
+#### Selectors
 
 You can use selectors to extract information from a specific page for a specific property of the oEmbed format. If no selectors are provided a set of default selectors will be used to extract this information. You can overwrite part or all of the default selectors by passing a custom selector for an oEmbed property.
 
@@ -127,7 +127,7 @@ The current library supports attribute values of matched element, or text within
 | authorName   | `meta[name=author]`             | false | content   | `resource host`   |
 | thumbnail    | `meta[property="og:image"]`     | false | content   | `unedfined`       |
 
-#### Example with custom selectors
+##### Example with custom selectors
 
 The following configuration of selectors is set to extract the author name and url of blog post on [medium.com](https://medium.com).
 
@@ -156,7 +156,7 @@ oembedder(url, { selectors })
   .catch(console.log);
 ```
 
-### Http options
+#### Http options
 
 The configuration of the module allows the user to set some information of the http GET request. The allowed options are the following:
 
@@ -168,7 +168,7 @@ The configuration of the module allows the user to set some information of the h
 | headers        | `undefined`   | A JS object with [http header info](https://github.com/request/request#custom-http-headers) |
 | timeout        |               | After the timeout in `ms` the request will respond with `ESOCKETTIMEDOUT` error             |
 
-#### Example with http options
+##### Example with http options
 
 ```js
 const oembedder = require('oembedder');
@@ -184,10 +184,10 @@ oembedder(url, { httpOptions })
   .catch(console.log);
 ```
 
-# Limitations
+## Limitations
 
 At the moment the library only resolves oEmbeds of type link for the resources that no provider is given or matched.
 
-
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdinostheo%2Foembedder.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdinostheo%2Foembedder?ref=badge_large)
