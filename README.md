@@ -1,6 +1,7 @@
 # oembedder
 
 [![CircleCI](https://circleci.com/gh/dinostheo/oembedder/tree/master.svg?style=svg)](https://circleci.com/gh/dinostheo/oembedder/tree/master) [![Known Vulnerabilities](https://snyk.io/test/github/dinostheo/oembedder/badge.svg?targetFile=package.json)](https://snyk.io/test/github/dinostheo/oembedder?targetFile=package.json)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdinostheo%2Foembedder.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdinostheo%2Foembedder?ref=badge_shield)
 
 Delivers the embedded representation of a URL if one is provided or tries to create it with the information present on the given URL.
 
@@ -186,3 +187,7 @@ oembedder(url, { httpOptions })
 # Limitations
 
 At the moment the library only resolves oEmbeds of type link for the resources that no provider is given or matched.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fdinostheo%2Foembedder.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fdinostheo%2Foembedder?ref=badge_large)
