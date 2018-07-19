@@ -125,7 +125,10 @@ The current library supports attribute values of matched element, or text within
 | providerName | `meta[property=site_name]`      | false | content   | `resource host`   |
 | authorUrl    |                                 |       |           | `provider url`    |
 | authorName   | `meta[name=author]`             | false | content   | `resource host`   |
-| thumbnail    | `meta[property="og:image"]`     | false | content   | `unedfined`       |
+| thumbnail    | `meta[property="og:image"]`     | false | content   | `undefined`       |
+| text\*       |                                 |       |           | `undefined`       |
+
+\* The `text` property is an extension to possibly extract the text of a resource, which is not defined in the [oembed.com provider response](https://oembed.com/#section2.3).
 
 ##### Example with custom selectors
 
@@ -145,6 +148,39 @@ const selectors = {
     {
       selector: '.ds-link',
       attribute: 'href'
+    }
+  ]
+};
+
+const url = 'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';
+
+oembedder(url, { selectors })
+  .then(console.log)
+  .catch(console.log);
+```
+
+#### Example with customer selectors (extract text)
+
+```js
+const oembedder = require('oembedder');
+
+const selectors = {
+  authorName: [
+    {
+      selector: '.ds-link',
+      text: true
+    }
+  ],
+  authorUrl: [
+    {
+      selector: '.ds-link',
+      attribute: 'href'
+    }
+  ],
+  text: [
+    {
+      selector: '.section-inner',
+      text: true
     }
   ]
 };
