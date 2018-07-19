@@ -114,10 +114,7 @@ module.exports = (originUrl, config = {}) =>
         extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
       BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
       BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
-
-      if (selectors.text) {
-        BASIC_SCHEMA.text = extractField($, 'text', selectors);
-      }
+      BASIC_SCHEMA.text = extractField($, 'text', selectors);
 
       try {
         if (BASIC_SCHEMA.thumbnail_url) {

@@ -24,5 +24,15 @@ module.exports = {
       selector: 'meta[property="og:image"]',
       attribute: 'content'
     }
+  ],
+  text: [
+    {
+      selector: 'section[class$=content]',
+      text: true
+    },
+    {
+      selector: 'div[class$=content]',
+      text: true
+    }
   ]
 };
