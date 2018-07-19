@@ -25,7 +25,9 @@ function extractField($, field, selectors) {
   if (text) {
     return $(selector)
       .first()
-      .text();
+      .text()
+      .replace(/\r?\n/g, '')
+      .trim();
   }
 
   if (attribute) {
