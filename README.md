@@ -138,18 +138,14 @@ The following configuration of selectors is set to extract the author name and u
 const oembedder = require('oembedder');
 
 const selectors = {
-  authorName: [
-    {
-      selector: 'meta[property="author"]',
-      attribute: 'content'
-    }
-  ],
-  authorUrl: [
-    {
-      selector: 'link[rel="author"]',
-      attribute: 'href'
-    }
-  ]
+  authorName: {
+    selector: 'meta[property="author"]',
+    attribute: 'content'
+  },
+  authorUrl: {
+    selector: 'link[rel="author"]',
+    attribute: 'href'
+  }
 };
 
 const url = 'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';
@@ -165,24 +161,18 @@ oembedder(url, { selectors })
 const oembedder = require('oembedder');
 
 const selectors = {
-  authorName: [
-    {
-      selector: 'meta[property="author"]',
-      attribute: 'content'
-    }
-  ],
-  authorUrl: [
-    {
-      selector: 'link[rel="author"]',
-      attribute: 'href'
-    }
-  ],
-  text: [
-    {
-      selector: '.section-content',
-      text: true
-    }
-  ]
+  authorName: {
+    selector: 'meta[property="author"]',
+    attribute: 'content'
+  },
+  authorUrl: {
+    selector: 'link[rel="author"]',
+    attribute: 'href'
+  },
+  text: {
+    selector: '.section-content',
+    text: true
+  }
 };
 
 const url = 'https://medium.com/the-node-js-collection/native-extensions-for-node-js-767e221b3d26';

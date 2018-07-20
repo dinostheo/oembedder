@@ -12,15 +12,13 @@ const BASIC_SCHEMA = {
 };
 
 function extractField($, field, selectors) {
-  const fieldSelectors = selectors[field] || defaultSelectors[field];
+  const fieldSelector = selectors[field] || defaultSelectors[field];
 
-  if (!fieldSelectors) {
+  if (!fieldSelector) {
     return;
   }
 
-  const { selector, text = false, attribute = null } = fieldSelectors.filter(({ selctr }) =>
-    $(selctr)
-  )[0];
+  const { selector, text = false, attribute = null } = fieldSelector;
 
   if (text) {
     return $(selector)
