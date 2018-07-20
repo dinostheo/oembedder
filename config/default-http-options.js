@@ -2,7 +2,7 @@
 
 module.exports = {
   gzip: true,
-  followRedirect: false,
+  followRedirect: true,
   timeout: 10000,
   encoding: 'utf-8'
 };

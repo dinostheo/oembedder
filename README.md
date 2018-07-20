@@ -140,13 +140,13 @@ const oembedder = require('oembedder');
 const selectors = {
   authorName: [
     {
-      selector: '.ds-link',
-      text: true
+      selector: 'meta[property="author"]',
+      attribute: 'content'
     }
   ],
   authorUrl: [
     {
-      selector: '.ds-link',
+      selector: 'link[rel="author"]',
       attribute: 'href'
     }
   ]
@@ -167,19 +167,19 @@ const oembedder = require('oembedder');
 const selectors = {
   authorName: [
     {
-      selector: '.ds-link',
-      text: true
+      selector: 'meta[property="author"]',
+      attribute: 'content'
     }
   ],
   authorUrl: [
     {
-      selector: '.ds-link',
+      selector: 'link[rel="author"]',
       attribute: 'href'
     }
   ],
   text: [
     {
-      selector: '.section-inner',
+      selector: '.section-content',
       text: true
     }
   ]
@@ -199,7 +199,7 @@ The configuration of the module allows the user to set some information of the h
 | http option    | Default value | Description                                                                                 |
 | -------------- | ------------- | ------------------------------------------------------------------------------------------- |
 | encoding       | `utf-8`       | The encoding to be used by the request                                                      |
-| followRedirect | `false`       | To follow or not `3xx` responses as redirects                                               |
+| followRedirect | `true`        | To follow or not `3xx` responses as redirects                                               |
 | gzip           | `true`        | Requests compressed content or not                                                          |
 | headers        | `undefined`   | A JS object with [http header info](https://github.com/request/request#custom-http-headers) |
 | timeout        |               | After the timeout in `ms` the request will respond with `ESOCKETTIMEDOUT` error             |
