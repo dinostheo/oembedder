@@ -1,6 +1,6 @@
 {
   "name": "oembedder",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Library to oEmbed a resource",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,12 @@
     "image-size": "^0.6.3",
     "request": "^2.87.0"
   },
-  "keywords": ["oembed", "embedded", "Node.js", "web-scraping"],
+  "keywords": [
+    "oembed",
+    "embedded",
+    "Node.js",
+    "web-scraping"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/dinostheo/oembedder.git"
@@ -27,7 +32,7 @@
   "homepage": "https://github.com/dinostheo/oembedder",
   "devDependencies": {
     "editorconfig": "^0.15.0",
-    "eslint": "^5.1.0",
+    "eslint": "^5.2.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.13.0",
