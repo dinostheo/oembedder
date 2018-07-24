@@ -18,7 +18,7 @@ function extractField($, field, selectors) {
     return;
   }
 
-  const { selector, text = false, attribute = null } = fieldSelector;
+  const { selector, text = false, html = false, attribute = null } = fieldSelector;
 
   if (text) {
     return $(selector)
@@ -32,6 +32,10 @@ function extractField($, field, selectors) {
     return $(selector)
       .first()
       .attr(attribute);
+  }
+
+  if (html) {
+    return $(selector).html();
   }
 }
 
@@ -113,6 +117,7 @@ module.exports = (originUrl, config = {}) =>
       BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
       BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
       BASIC_SCHEMA.text = extractField($, 'text', selectors);
+      BASIC_SCHEMA.htmlText = extractField($, 'htmlText', selectors);
 
       try {
         if (BASIC_SCHEMA.thumbnail_url) {

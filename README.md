@@ -116,7 +116,7 @@ _Response_
 
 You can use selectors to extract information from a specific page for a specific property of the oEmbed format. If no selectors are provided a set of default selectors will be used to extract this information. You can overwrite part or all of the default selectors by passing a custom selector for an oEmbed property.
 
-The current library supports attribute values of matched element, or text within its html tag.
+The current library supports attribute values of matched element, text within its html tag, or the html content.
 
 | Property     | Default selector(s)             | text  | attribute | Default value     |
 | ------------ | ------------------------------- | ----- | --------- | ----------------- |
@@ -127,8 +127,13 @@ The current library supports attribute values of matched element, or text within
 | authorName   | `meta[name=author]`             | false | content   | `resource host`   |
 | thumbnail    | `meta[property="og:image"]`     | false | content   | `undefined`       |
 | text\*       |                                 |       |           | `undefined`       |
+| htmlText\*\* |                                 |       |           | `undefined`       |
 
 \* The `text` property is an extension to possibly extract the text of a resource, which is not defined in the [oembed.com provider response](https://oembed.com/#section2.3).
+
+\*\* The `htmlText` property is another extension to possibly extract the text of a resource, similarly with the text property above, but including the html markup.
+
+_Those too extensions intent to enrich the oEmbed format for a better representation on the web._
 
 ##### Example with custom selectors
 

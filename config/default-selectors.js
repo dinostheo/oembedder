@@ -17,5 +17,9 @@ module.exports = {
   text: {
     selector: 'div[class$=content]',
     text: true
+  },
+  htmlText: {
+    selector: 'div[class$=content]',
+    html: true
   }
 };
