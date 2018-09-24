@@ -53,6 +53,20 @@ function fetchProviderOembed(originUrl, provider) {
   });
 }
 
+function fixRelativeUrl(srcUrl, parsedUrl) {
+  const base = `${parsedUrl.protocol}//${parsedUrl.host}`;
+
+  if (!srcUrl) {
+    return base;
+  }
+
+  if (/^\//.test(srcUrl)) {
+    return `${base}${srcUrl}`;
+  }
+
+  return srcUrl;
+}
+
 function getThumbnailSize(imageUrl) {
   return new Promise((resolve, reject) => {
     request(
@@ -109,11 +123,12 @@ module.exports = (originUrl, config = {}) =>
       const $ = cheerio.load(body);
 
       BASIC_SCHEMA.title = extractField($, 'title', selectors);
-      BASIC_SCHEMA.provider_url =
-        extractField($, 'providerUrl', selectors) || `${parsedUrl.protocol}//${parsedUrl.host}/`;
+      BASIC_SCHEMA.provider_url = fixRelativeUrl(
+        extractField($, 'providerUrl', selectors),
+        parsedUrl
+      );
       BASIC_SCHEMA.provider_name = extractField($, 'providerName', selectors) || parsedUrl.host;
-      BASIC_SCHEMA.author_url =
-        extractField($, 'authorUrl', selectors) || BASIC_SCHEMA.provider_url;
+      BASIC_SCHEMA.author_url = fixRelativeUrl(extractField($, 'authorUrl', selectors), parsedUrl);
       BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
       BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
       BASIC_SCHEMA.text = extractField($, 'text', selectors);
