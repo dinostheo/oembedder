@@ -1,7 +1,7 @@
 'use strict';
 
 const request = require('request');
-const cheerio = require('cheerio');
+const sqrap = require('sqrap');
 const url = require('url');
 const imageSize = require('image-size');
 const { defaultSelectors, defaultHttpOptions } = require('./config');
@@ -10,34 +10,6 @@ const BASIC_SCHEMA = {
   version: '1.0',
   type: 'link'
 };
-
-function extractField($, field, selectors) {
-  const fieldSelector = selectors[field] || defaultSelectors[field];
-
-  if (!fieldSelector) {
-    return;
-  }
-
-  const { selector, text = false, html = false, attribute = null } = fieldSelector;
-
-  if (text) {
-    return $(selector)
-      .first()
-      .text()
-      .replace(/\r?\n/g, '')
-      .trim();
-  }
-
-  if (attribute) {
-    return $(selector)
-      .first()
-      .attr(attribute);
-  }
-
-  if (html) {
-    return $(selector).html();
-  }
-}
 
 function fetchProviderOembed(originUrl, provider) {
   const oembedUrl = `${provider}?url=${originUrl}&format=json`;
@@ -94,6 +66,7 @@ module.exports = (originUrl, config = {}) =>
   new Promise(async (resolve, reject) => {
     const { selectors = {}, provider, httpOptions = {} } = config;
     const parsedUrl = url.parse(originUrl);
+    const mergedSelectors = Object.assign({}, defaultSelectors, selectors);
 
     if (provider) {
       try {
@@ -105,57 +78,37 @@ module.exports = (originUrl, config = {}) =>
       }
     }
 
-    const requestOptions = {
-      method: 'GET',
-      uri: originUrl,
-      gzip: httpOptions.gzip || defaultHttpOptions.gzip,
-      followRedirect: httpOptions.followRedirect || defaultHttpOptions.followRedirect,
-      timeout: httpOptions.timeout || defaultHttpOptions.timeout,
-      encoding: httpOptions.encoding || defaultHttpOptions.encoding,
-      headers: httpOptions.headers || defaultHttpOptions.headers
-    };
+    const requestOptions = Object.assign({}, defaultHttpOptions, httpOptions);
+    let extractedValues;
 
-    const reqStream = request(requestOptions, async (error, response, body) => {
-      if (error) {
-        return reject(error);
+    try {
+      extractedValues = await sqrap(originUrl, {
+        selectors: mergedSelectors,
+        httpOptions: requestOptions
+      });
+    } catch (error) {
+      return reject(error);
+    }
+
+    BASIC_SCHEMA.title = extractedValues.title;
+    BASIC_SCHEMA.provider_url = fixRelativeUrl(extractedValues.providerUrl, parsedUrl);
+    BASIC_SCHEMA.provider_name = extractedValues.providerName || parsedUrl.host;
+    BASIC_SCHEMA.author_url = fixRelativeUrl(extractedValues.authorUrl, parsedUrl);
+    BASIC_SCHEMA.author_name = extractedValues.authorName || parsedUrl.host;
+    BASIC_SCHEMA.thumbnail_url = extractedValues.thumbnail;
+    BASIC_SCHEMA.text = extractedValues.text;
+    BASIC_SCHEMA.htmlText = extractedValues.htmlText;
+
+    try {
+      if (BASIC_SCHEMA.thumbnail_url) {
+        const { width, height } = await getThumbnailSize(BASIC_SCHEMA.thumbnail_url);
+
+        BASIC_SCHEMA.thumbnail_width = width;
+        BASIC_SCHEMA.thumbnail_height = height;
       }
+    } catch (thumbnailError) {
+      return reject(thumbnailError);
+    }
 
-      const $ = cheerio.load(body);
-
-      BASIC_SCHEMA.title = extractField($, 'title', selectors);
-      BASIC_SCHEMA.provider_url = fixRelativeUrl(
-        extractField($, 'providerUrl', selectors),
-        parsedUrl
-      );
-      BASIC_SCHEMA.provider_name = extractField($, 'providerName', selectors) || parsedUrl.host;
-      BASIC_SCHEMA.author_url = fixRelativeUrl(extractField($, 'authorUrl', selectors), parsedUrl);
-      BASIC_SCHEMA.author_name = extractField($, 'authorName', selectors) || parsedUrl.host;
-      BASIC_SCHEMA.thumbnail_url = extractField($, 'thumbnail', selectors);
-      BASIC_SCHEMA.text = extractField($, 'text', selectors);
-      BASIC_SCHEMA.htmlText = extractField($, 'htmlText', selectors);
-
-      try {
-        if (BASIC_SCHEMA.thumbnail_url) {
-          const { width, height } = await getThumbnailSize(BASIC_SCHEMA.thumbnail_url);
-
-          BASIC_SCHEMA.thumbnail_width = width;
-          BASIC_SCHEMA.thumbnail_height = height;
-        }
-      } catch (thumbnailError) {
-        return reject(thumbnailError);
-      }
-
-      resolve(BASIC_SCHEMA);
-    });
-
-    reqStream.on('response', response => {
-      if (response.statusCode !== 200) {
-        reqStream.emit('error', new Error(`Http status code ${response.statusCode}`));
-      } else if (!/text\/html/.test(response.headers['content-type'])) {
-        reqStream.emit(
-          'error',
-          new Error(`Unsupported content type ${response.headers['content-type']}`)
-        );
-      }
-    });
+    resolve(BASIC_SCHEMA);
   });

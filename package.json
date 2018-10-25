@@ -12,9 +12,9 @@
   "author": "Dinos Theodorou <dinostheo@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.2",
     "image-size": "^0.6.3",
-    "request": "^2.87.0"
+    "request": "^2.88.0",
+    "sqrap": "^1.1.3"
   },
   "keywords": [
     "oembed",
@@ -31,13 +31,13 @@
   },
   "homepage": "https://github.com/dinostheo/oembedder",
   "devDependencies": {
-    "editorconfig": "^0.15.0",
-    "eslint": "^5.2.0",
-    "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-import": "^2.13.0",
-    "husky": "^0.14.3",
-    "lint-staged": "^7.2.0",
-    "prettier": "^1.13.7"
+    "editorconfig": "^0.15.2",
+    "eslint": "^5.7.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "husky": "^1.1.2",
+    "lint-staged": "^7.3.0",
+    "prettier": "^1.14.3"
   }
 }
