@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "image-size": "^0.7.1",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "sqrap": "^1.1.5"
   },
   "keywords": [
