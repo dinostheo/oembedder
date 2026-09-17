@@ -12,7 +12,7 @@
   "author": "Dinos Theodorou <dinostheo@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "image-size": "^0.7.1",
+    "image-size": "npm:image-size-next@1.2.2",
     "request": "^2.88.0",
     "sqrap": "^1.1.5"
   },
